@@ -1,10 +1,16 @@
 import styled from 'styled-components';
 
 const Page001StyleContainer = styled.div`
-  height: 100%;
+  height: 100vh;
   width: 100%;
   color: blue;
   padding: 0rem 4rem;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  pointer-events: none;
 
   header {
     height: 4rem;

@@ -59,7 +59,7 @@ float blurCircle(vec2 pixelCoords, float size) {
 void main() {
   vec2 pixelCoords = (vUv - 0.5) * u_resolution;
 
-  vec3 color = vec3(0.95);
+  vec3 color = vec3(1.);
   vec3 black = vec3(0.0);
   vec3 orange = vec3(1.0, 0.9255, 0.549);
   vec3 red = vec3(0.973, 0.094, 0);
@@ -71,11 +71,11 @@ void main() {
   float mainCircle = sdfMainCircle(pos, 100. * u_scale);
 
 // 1st orange circle
-  vec2 orange1Pos = vec2(-330. + u_BlurCirclePos.x, 100. + u_BlurCirclePos.y * (sin(20. * u_time * .05)) - 770.);
+  vec2 orange1Pos = vec2(100. * (cos(20. * u_time * .05)) - 330. + u_BlurCirclePos.x, 100. * (sin(20. * u_time * .05)) - 770. + u_BlurCirclePos.y);
   float orangeCircle = blurCircle(pixelCoords - orange1Pos, 1620.);
 
   // red circle
-  vec2 redPos = vec2(-720. + u_BlurCirclePos.x, 100. + u_BlurCirclePos.y * (sin(20. * u_time * .05)) - 1170.);
+  vec2 redPos = vec2(100. * (cos(20. * u_time * .05)) - 720. + u_BlurCirclePos.x, 100. * (sin(20. * u_time * .05)) - 1170. + u_BlurCirclePos.y);
   float redCircle = blurCircle(pixelCoords - redPos, 1590.);
 
   // orange circle behind
@@ -83,8 +83,8 @@ void main() {
   color = mix(color, red, smoothstep(400., -800., redCircle));
 
   // main circle at the front
-  color = mix(color, black, smoothstep(0.0, -300.0, mainCircleShadow));
-  color = mix(vec3(0.95), color, smoothstep(0.0, 1.0, mainCircle));
+  // color = mix(color, black, smoothstep(0.0, -300.0, mainCircleShadow));
+  // color = mix(vec3(1.), color, smoothstep(0.0, 1.0, mainCircle));
 
   gl_FragColor = vec4(color, 1.0);
 }
