@@ -82,7 +82,7 @@ void main() {
   vec3 purple = vec3(0.9255, 0.6745, 1.0);
   vec3 blue = vec3(0.6078, 0.7647, 0.9804);
   vec3 lightBlue = vec3(0.7765, 0.8745, 0.9882);
-  vec3 lightPink = vec3(0.9843, 0.9569, 0.9804);
+  vec3 lightPink = vec3(1.0, 0.9529, 0.8902);
   vec3 orange = vec3(0.9608, 0.4549, 0.1412);
   vec3 yellow = vec3(1.0, 0.85499260812105, 0.5775804404214573);
 
@@ -133,7 +133,7 @@ void main() {
   color = mix(color, orange, smoothstep(120., -150., orangeCircle));
   color = mix(color, blue, smoothstep(150., -150., blueCircle));
   color = mix(color, lightBlue, smoothstep(200., -200., lightBlueCircle));
-  color = mix(color, lightPink, smoothstep(90., -150., lightPinkCircle));
+  color = mix(color, lightPink, smoothstep(90., -180., lightPinkCircle));
   // color = mix(color, blue, smoothstep(u_Threshold.x, u_Threshold.y, blueCircle));
   // color = mix(color, red, smoothstep(400., -8., redCircle));
 
