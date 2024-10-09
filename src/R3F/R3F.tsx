@@ -6,9 +6,10 @@ import R3FStyleContainer from './R3FStyleContainer';
 const R3F = () => {
   return (
     <R3FStyleContainer>
-      <Canvas>
+      <Canvas gl={{ antialias: true }}>
         <OrbitControls />
         <Background />
+        {/* <GradientBackground /> */}
       </Canvas>
     </R3FStyleContainer>
   );
