@@ -1,6 +1,7 @@
 import { OrbitControls } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import Background from './Background/Background';
+import Particles02 from './Particles/Particles02';
 import R3FStyleContainer from './R3FStyleContainer';
 
 const R3F = () => {
@@ -9,7 +10,12 @@ const R3F = () => {
       <Canvas gl={{ antialias: true }}>
         <OrbitControls />
         <Background />
-        {/* <GradientBackground /> */}
+        <Particles02 />
+        {/* <group>
+        <pointLight intensity={50000} decay={2} color="white" />
+        <Particles01 count={10000} />
+        </group> */}
+        {/* <Effect /> */}
       </Canvas>
     </R3FStyleContainer>
   );

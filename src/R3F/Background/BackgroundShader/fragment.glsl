@@ -10,6 +10,10 @@ uniform vec2 u_LightPinkCircle;
 uniform vec2 u_Threshold;
 uniform float u_time;
 
+float random(vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.);
+}
+
 float inverseLerp(float currentValue, float minValue, float maxValue) {
   return (currentValue - minValue) / (maxValue - minValue);
 }
@@ -56,7 +60,7 @@ float sdfMainCircle(vec2 pixelCoords, float size) {
 
 float bgCircles(vec2 pixelCoords, float size) {
 
-  vec2 wavedPixelCoords = vec2(pixelCoords.x + cos(pixelCoords.y * 0.02 + u_time) * 8.0, pixelCoords.y + sin(pixelCoords.x * 0.02 + u_time) * 8.);
+  vec2 wavedPixelCoords = vec2(pixelCoords.x + cos(pixelCoords.y * 0.02 + u_time) * 10.0, pixelCoords.y + sin(pixelCoords.x * 0.02 + u_time) * 10.0);
 
   float circle = sdfCircle(wavedPixelCoords, size);
 
@@ -77,65 +81,75 @@ void main() {
 
   vec3 color = vec3(1.);
   vec3 black = vec3(0.0, 0.0, 0.0);
-  vec3 white = vec3(1.0, 0.9647, 0.8902);
+  vec3 white = vec3(0.9882, 0.9686, 0.8902);
   vec3 red = vec3(1., 0.07227185067438519, 0);
   vec3 purple = vec3(0.9255, 0.6745, 1.0);
-  vec3 blue = vec3(0.6078, 0.7647, 0.9804);
+  vec3 blue = vec3(0.6627, 0.7922, 0.9765);
   vec3 lightBlue = vec3(0.7765, 0.8745, 0.9882);
   vec3 lightPink = vec3(1.0, 0.9529, 0.8902);
-  vec3 orange = vec3(0.9608, 0.4549, 0.1412);
+  vec3 orange = vec3(0.9686, 0.5098, 0.2235);
   vec3 yellow = vec3(1.0, 0.85499260812105, 0.5775804404214573);
 
   vec2 offset = vec2(u_Position.x, u_Position.y);
   vec2 pos = pixelCoords - offset;
+    // particle ish grain effect
+  float strength = mix(0.95, 1.0, random(vUv));
 
 // main white circle
-  float mainCircleShadow = sdfMainCircle(pos, 102. * u_scale);
-  float mainCircle = sdfMainCircle(pos, 100. * u_scale);
+  float mainCircleShadow = sdfMainCircle(pos, 102.);
+  float mainCircle = sdfMainCircle(pos, 100.);
 
   // red circle
-  vec2 redPos = vec2(10. * (sin(2. * u_time * .05)), 10. * (cos(2. * u_time * .05)));
+  vec2 redPos = vec2(40. * (sin(2. * u_time * .5)), 40. * (cos(2. * u_time * .5)));
   float redCircle = bgCircles(pixelCoords - redPos, 500.);
 
 // yellow circle
-  vec2 yellowPos = vec2(10. * (cos(2. * u_time * .05)) + 11., 10. * (sin(2. * u_time * .05)) - 20.);
+  vec2 yellowPos = vec2(30. * (cos(2. * u_time * .5)) + 11., 30. * (sin(2. * u_time * .5)) - 20.);
   float yellowCircle = bgCircles(pixelCoords - yellowPos, 520.);
 
   // white HighlightCircle
-  vec2 whitePos = vec2(10. * (cos(2. * u_time * .05)) + 11., 10. * (sin(2. * u_time * .05)) - 20.);
+  vec2 whitePos = vec2(10. * (cos(2. * u_time * .5)) + 11., 10. * (sin(2. * u_time * .5)) - 20.);
   float whiteCircle = bgCircles(pixelCoords - whitePos, 400.);
 
+  // white HighlightCircle
+  vec2 miniWhitePos = vec2(30. * (cos(2. * u_time * .5)) + 240., 50. * (sin(2. * u_time * .5)) + 120.);
+  float miniWhiteCircle = bgCircles(pixelCoords - miniWhitePos, 100.);
+
 // 1st orange circle
-  vec2 orangePos = vec2(10. * (sin(2. * u_time * .05)) + u_OrangeCircle.x, 10. * (cos(2. * u_time * .05)) + u_OrangeCircle.y);
-  float orangeCircle = subCircles(pixelCoords - orangePos, 200.);
+  vec2 orangePos = vec2(70. * (sin(2. * u_time * .5)) + u_OrangeCircle.x, 70. * (cos(2. * u_time * .5)) + u_OrangeCircle.y);
+  float orangeCircle = subCircles(pixelCoords - orangePos, 360.);
 
 // 1st purple circle
-  vec2 purplePos = vec2(10. * (cos(2. * u_time * .05)) + u_PurpleCircle.x, 10. * (sin(2. * u_time * .05)) + u_PurpleCircle.y);
+  vec2 purplePos = vec2(40. * (cos(2. * u_time * .5)) + u_PurpleCircle.x, 40. * (sin(2. * u_time * .5)) + u_PurpleCircle.y);
   float purpleCircle = subCircles(pixelCoords - purplePos, 160.);
 
 // 1st blue circle
-  vec2 bluePos = vec2(10. * (cos(2. * u_time * .05)) + u_BlueCircle.x, 10. * (sin(2. * u_time * .05)) + u_BlueCircle.y);
+  vec2 bluePos = vec2(30. * (cos(2. * u_time * .5)) + u_BlueCircle.x, 60. * (sin(2. * u_time * .5)) + u_BlueCircle.y);
   float blueCircle = subCircles(pixelCoords - bluePos, 240.);
 
 // light blue circle
-  vec2 lightBluePos = vec2(10. * (cos(2. * u_time * .05)) + u_BlueCircle.x, 10. * (sin(2. * u_time * .05)) + u_BlueCircle.y);
+  vec2 lightBluePos = vec2(10. * (cos(2. * u_time * .5)) + u_BlueCircle.x, 10. * (sin(2. * u_time * .5)) + u_BlueCircle.y);
   float lightBlueCircle = subCircles(pixelCoords - lightBluePos, 220.);
 
 // 1st lightPink circle
-  vec2 lightPinkPos = vec2(10. * (cos(2. * u_time * .05)) + u_LightPinkCircle.x, 10. * (sin(2. * u_time * .05)) + u_LightPinkCircle.y);
+  vec2 lightPinkPos = vec2(10. * (cos(2. * u_time * .5)) + u_LightPinkCircle.x, 50. * (sin(2. * u_time * .05)) + u_LightPinkCircle.y);
   float lightPinkCircle = subCircles(pixelCoords - lightPinkPos, 200.);
 
-  // circle colors
+  // Big Circle BGs
   color = mix(color, red, smoothstep(160., -320., redCircle));
   color = mix(color, yellow, smoothstep(40., -80., yellowCircle));
   color = mix(color, white, smoothstep(150., -100., whiteCircle));
+
+  // mini sub circles 
   color = mix(color, purple, smoothstep(120., -110., purpleCircle));
-  color = mix(color, orange, smoothstep(120., -150., orangeCircle));
-  color = mix(color, blue, smoothstep(150., -150., blueCircle));
+  color = mix(color, orange, smoothstep(120., -240., orangeCircle));
+  color = mix(color, blue, smoothstep(150., -200., blueCircle));
   color = mix(color, lightBlue, smoothstep(200., -200., lightBlueCircle));
   color = mix(color, lightPink, smoothstep(90., -180., lightPinkCircle));
-  // color = mix(color, blue, smoothstep(u_Threshold.x, u_Threshold.y, blueCircle));
-  // color = mix(color, red, smoothstep(400., -8., redCircle));
+
+  color = mix(color, white, smoothstep(100., -100., miniWhiteCircle));
+
+  color *= strength;
 
   // main circle at the front
   color = mix(color, black, smoothstep(0.0, -10.0, mainCircleShadow));
