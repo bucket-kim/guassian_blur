@@ -13,7 +13,7 @@ const getPoint = (v: any, size: number, data: any, offset: any) => {
 const getSphere = (count: number, size: number, p = new THREE.Vector3()) => {
   // const p = new THREE.Vector3();
   const data = new Float32Array(count * 4);
-  for (let i = 0; i < count * 3; i++) getPoint(p, size, data, i);
+  for (let i = 0; i < count * 3; i += 3) getPoint(p, size, data, i);
   return data;
 };
 
@@ -41,25 +41,17 @@ const getRandomData = (width: number, height: number) => {
 
 class SimulationMaterial extends THREE.ShaderMaterial {
   constructor(size: number) {
-    const positionsTexture = new THREE.DataTexture(
-      getRandomData(size, size),
-      size,
-      size,
-      THREE.RGBAFormat,
-      THREE.FloatType,
-    );
     const positionsSphereTexture = new THREE.DataTexture(
-      getSphere(size * size, 256),
+      getSphere(size * size, size / 4),
       size,
       size,
       THREE.RGBAFormat,
       THREE.FloatType,
     );
-    positionsTexture.needsUpdate = true;
     positionsSphereTexture.needsUpdate = true;
 
     const simulationUniforms = {
-      positions: { value: positionsSphereTexture },
+      uPositions: { value: positionsSphereTexture },
       uFrequency: { value: 0.75 },
       uTime: { value: 0 },
     };

@@ -18,7 +18,7 @@ class ParticleSimMaterial extends THREE.ShaderMaterial {
       getSphere(512 * 512, 128),
       512,
       512,
-      THREE.RGBAFormat,
+      THREE.RGBFormat,
       THREE.FloatType,
     );
 

@@ -5,6 +5,7 @@ import {
   ReactThreeFiber,
   useFrame,
 } from '@react-three/fiber';
+import { useControls } from 'leva';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import SimulationMaterial from './SimulationMaterial';
@@ -33,7 +34,9 @@ const Particles02 = () => {
   const simulatorMatRef = useRef<THREE.ShaderMaterial>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
-  const size = 1024 + 512;
+  // const size = 2048;
+  const size = 1024;
+  // const size = 512;
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
@@ -73,11 +76,19 @@ const Particles02 = () => {
     return particles;
   }, [size]);
 
+  const particleControls = useControls({
+    uFocus: { value: 9, min: 0, max: 15, step: 0.01 },
+    uFov: { value: 10, min: 0, max: 200, step: 0.01 },
+    uFrequency: { value: 0.35, min: 0.01, max: 0.75, step: 0.01 },
+  });
+
   const uniforms = useMemo(
     () => ({
       uPositions: {
         value: null,
       },
+      uFocus: { value: particleControls.uFocus },
+      uFov: { value: particleControls.uFov },
     }),
     [],
   );
@@ -100,26 +111,72 @@ const Particles02 = () => {
 
     const pointsMaterial = pointsRef.current.material as THREE.ShaderMaterial;
     pointsMaterial.uniforms.uPositions.value = renderTarget.texture;
+    simulatorMatRef.current.uniforms.uTime.value = elapsedTime * 2;
+    pointsMaterial.uniforms.uFocus.value = THREE.MathUtils.lerp(
+      pointsMaterial.uniforms.uFocus.value,
+      particleControls.uFocus,
+      0.1,
+    );
+    pointsMaterial.uniforms.uFov.value = THREE.MathUtils.lerp(
+      pointsMaterial.uniforms.uFov.value,
+      particleControls.uFov,
+      0.1,
+    );
 
-    simulatorMatRef.current.uniforms.uTime.value = elapsedTime;
-    // simulatorMatRef.current.uniforms.uFrequency.value = THREE.MathUtils.lerp(
-    //   simulatorMatRef.current.uniforms.uFrequency.value,
-    //   0.1,
-    //   0.1,
-    // );
+    simulatorMatRef.current.uniforms.uFrequency.value = THREE.MathUtils.lerp(
+      simulatorMatRef.current.uniforms.uFrequency.value,
+      particleControls.uFrequency,
+      0.1,
+    );
   });
 
   return (
-    // <Hud renderPriority={2}>
-    //   <OrthographicCamera
-    //     makeDefault
-    //     top={1}
-    //     right={1}
-    //     bottom={-1}
-    //     left={-1}
-    //     near={-1}
-    //     far={1}
-    //   />
+    // <group position={[0, 0, 0]} frustumCulled={false} scale={3}>
+    //   {createPortal(
+    //     <mesh>
+    //       <simulationMaterial ref={simulatorMatRef} args={[size]} />
+    //       <bufferGeometry>
+    //         <bufferAttribute
+    //           attach={'attributes-position'}
+    //           count={positions.length / 3}
+    //           array={positions}
+    //           itemSize={3}
+    //         />
+    //         <bufferAttribute
+    //           attach={'attributes-uv'}
+    //           count={uvs.length / 2}
+    //           array={uvs}
+    //           itemSize={2}
+    //         />
+    //       </bufferGeometry>
+    //     </mesh>,
+    //     scene,
+    //   )}
+    //   <points ref={pointsRef}>
+    //     <bufferGeometry>
+    //       <bufferAttribute
+    //         attach={'attributes-position'}
+    //         count={particlesPosition.length / 3}
+    //         array={particlesPosition}
+    //         itemSize={3}
+    //       />
+    //       {/* <bufferAttribute
+    //           attach={'attributes-color'}
+    //           count={particlesPosition.length / 2}
+    //           array={particlesPosition}
+    //           itemSize={2}
+    //         /> */}
+    //     </bufferGeometry>
+    //     <shaderMaterial
+    //       blending={THREE.AdditiveBlending}
+    //       depthWrite={false}
+    //       transparent={true}
+    //       uniforms={uniforms}
+    //       vertexShader={vertexShader}
+    //       fragmentShader={fragmentShader}
+    //     />
+    //   </points>
+    // </group>
     <Hud renderPriority={2}>
       <group position={[0, 0, 0]} frustumCulled={false} scale={4}>
         {createPortal(
@@ -160,6 +217,7 @@ const Particles02 = () => {
           <shaderMaterial
             blending={THREE.AdditiveBlending}
             depthWrite={false}
+            transparent={true}
             uniforms={uniforms}
             vertexShader={vertexShader}
             fragmentShader={fragmentShader}
@@ -167,7 +225,6 @@ const Particles02 = () => {
         </points>
       </group>
     </Hud>
-    // </Hud>
   );
 };
 

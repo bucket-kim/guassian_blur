@@ -16,12 +16,7 @@ varying float vDistance;
 
 void main() {
   vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-  vec3 color = vec3(0.34, 0.53, 0.96);
-
   if (dot(cxy, cxy) > 1.0)
     discard;
-
-  float alpha = (1.04 - clamp(vDistance * 1.5, 0.0, 1.0));
-
-  gl_FragColor = vec4(color, alpha);
+  gl_FragColor = vec4(vec3(1.0), (1.04 - clamp(vDistance * 1.5, 0.0, 1.0)));
 }
