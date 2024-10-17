@@ -33,7 +33,7 @@ const Particles02 = () => {
   const simulatorMatRef = useRef<THREE.ShaderMaterial>(null);
   const pointsRef = useRef<THREE.Points>(null);
 
-  const size = 64;
+  const size = 1024 + 512;
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
@@ -101,7 +101,12 @@ const Particles02 = () => {
     const pointsMaterial = pointsRef.current.material as THREE.ShaderMaterial;
     pointsMaterial.uniforms.uPositions.value = renderTarget.texture;
 
-    simulatorMatRef.current.uniforms.uTime.value = elapsedTime * 0.025;
+    simulatorMatRef.current.uniforms.uTime.value = elapsedTime;
+    // simulatorMatRef.current.uniforms.uFrequency.value = THREE.MathUtils.lerp(
+    //   simulatorMatRef.current.uniforms.uFrequency.value,
+    //   0.1,
+    //   0.1,
+    // );
   });
 
   return (
@@ -116,7 +121,7 @@ const Particles02 = () => {
     //     far={1}
     //   />
     <Hud renderPriority={2}>
-      <group position={[0, 0, 5]} frustumCulled={false}>
+      <group position={[0, 0, 0]} frustumCulled={false} scale={4}>
         {createPortal(
           <mesh>
             <simulationMaterial ref={simulatorMatRef} args={[size]} />
@@ -152,7 +157,7 @@ const Particles02 = () => {
               itemSize={2}
             /> */}
           </bufferGeometry>
-          <simulationMaterial
+          <shaderMaterial
             blending={THREE.AdditiveBlending}
             depthWrite={false}
             uniforms={uniforms}

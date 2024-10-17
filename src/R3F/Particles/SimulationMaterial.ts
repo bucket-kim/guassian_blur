@@ -4,6 +4,19 @@ import simulationFragmentShader from './ParticleShaderFBO/fragment.glsl';
 // @ts-ignore
 import simulationVertexShader from './ParticleShaderFBO/vertex.glsl';
 
+const getPoint = (v: any, size: number, data: any, offset: any) => {
+  v.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+  if (v.length() > 1) return getPoint(v, size, data, offset);
+  return v.normalize().multiplyScalar(size).toArray(data, offset);
+};
+
+const getSphere = (count: number, size: number, p = new THREE.Vector3()) => {
+  // const p = new THREE.Vector3();
+  const data = new Float32Array(count * 4);
+  for (let i = 0; i < count * 3; i++) getPoint(p, size, data, i);
+  return data;
+};
+
 const getRandomData = (width: number, height: number) => {
   // we need to create a vec4 since we're passing the positions to the fragment shader
   // data textures need to have 4 components, R, G, B, and A
@@ -35,11 +48,19 @@ class SimulationMaterial extends THREE.ShaderMaterial {
       THREE.RGBAFormat,
       THREE.FloatType,
     );
+    const positionsSphereTexture = new THREE.DataTexture(
+      getSphere(size * size, 256),
+      size,
+      size,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+    );
     positionsTexture.needsUpdate = true;
+    positionsSphereTexture.needsUpdate = true;
 
     const simulationUniforms = {
-      positions: { value: positionsTexture },
-      uFrequency: { value: 0.25 },
+      positions: { value: positionsSphereTexture },
+      uFrequency: { value: 0.75 },
       uTime: { value: 0 },
     };
 

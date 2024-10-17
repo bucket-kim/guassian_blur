@@ -1,6 +1,5 @@
 import { Hud, OrthographicCamera, shaderMaterial } from '@react-three/drei';
-import { extend, ReactThreeFiber, useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { extend, ReactThreeFiber } from '@react-three/fiber';
 import { Fragment, useRef } from 'react';
 import * as THREE from 'three';
 // @ts-ignore
@@ -41,39 +40,6 @@ extend({ BackgroundMaterial });
 const Background = () => {
   // Use typeof BackgroundMaterial to match the ref type
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-
-  const {
-    xPosition,
-    yPosition,
-    CircleXPos,
-    CircleYPos,
-    nearThresh,
-    farThresh,
-    scale,
-  } = useControls('Background', {
-    xPosition: { value: 0, min: -2000, max: 2000, step: 10 }, // Control x axis
-    yPosition: { value: 0, min: -2000, max: 2000, step: 10 }, // Control y axis
-    CircleXPos: { value: 0, min: -1000, max: 1000, step: 10 }, // Control y axis
-    CircleYPos: { value: 400, min: -1000, max: 1000, step: 10 }, // Control y axis
-    nearThresh: { value: 150, min: 0, max: 1000, step: 0.1 },
-    farThresh: { value: -80, min: -1000, max: 0, step: 0.1 },
-    scale: { value: 0, min: 0, max: 300, step: 1 }, // Control scale
-  });
-
-  useFrame(({ clock }) => {
-    if (!materialRef.current) return;
-
-    const getElapsedTime = clock.elapsedTime;
-    // Access and update the shader material's uniforms
-    materialRef.current.uniforms.u_time.value = getElapsedTime;
-    materialRef.current.uniforms.u_Position.value.set(xPosition, yPosition);
-    materialRef.current.uniforms.u_OrangeCircle.value.set(
-      CircleXPos,
-      CircleYPos,
-    );
-    materialRef.current.uniforms.u_Threshold.value.set(nearThresh, farThresh);
-    materialRef.current.uniforms.u_scale.value = scale;
-  });
 
   return (
     <Fragment>

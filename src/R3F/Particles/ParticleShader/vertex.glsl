@@ -31,6 +31,7 @@
 
 uniform sampler2D uPositions;
 uniform float u_time;
+varying float vDistance;
 // varying vec3 vColor;
 
 void main() {
@@ -42,9 +43,12 @@ void main() {
 
   gl_Position = projectedPosition;
 
-  gl_PointSize = 15.0;
+  vDistance = abs(5.1 - -modelPosition.z);
+
+  // gl_PointSize = 2.0;
   // Size attenuation;
-  gl_PointSize *= step(1.0 - (1.0 / 64.0), position.x) + 0.5;
+  // gl_PointSize *= step(1.0 - (1.0 / 64.0), position.x) + 0.5;
+  gl_PointSize = (step(1.0 - (1.0 / 64.0), position.x)) * vDistance;
 
   // vColor = color
 }
