@@ -7,18 +7,18 @@ function getPoint(v: any, size: number, data: any, offset: any) {
 }
 
 function getSphere(count: any, size: number, p = new THREE.Vector3()) {
-  const data = new Float32Array(count * 3);
+  const data = new Float32Array(count * 4);
   for (let i = 0; i < count * 3; i += 3) getPoint(p, size, data, i);
   return data;
 }
 
 class ParticleSimMaterial extends THREE.ShaderMaterial {
-  constructor() {
+  constructor(size: number) {
     const positionsTexture = new THREE.DataTexture(
-      getSphere(512 * 512, 128),
-      512,
-      512,
-      THREE.RGBFormat,
+      getSphere(size * size, size / 4),
+      size,
+      size,
+      THREE.RGBAFormat,
       THREE.FloatType,
     );
 
@@ -160,10 +160,10 @@ class ParticleSimMaterial extends THREE.ShaderMaterial {
         vec3 curlPos = texture2D(positions, vUv).rgb;
         pos = curlNoise(pos * uCurlFreq + t);
         curlPos = curlNoise(curlPos * uCurlFreq + t);
-        curlPos += curlNoise(curlPos * uCurlFreq * 2.0) * 0.5;
-        curlPos += curlNoise(curlPos * uCurlFreq * 4.0) * 0.25;
-        curlPos += curlNoise(curlPos * uCurlFreq * 8.0) * 0.125;
-        curlPos += curlNoise(pos * uCurlFreq * 16.0) * 0.0625;
+        // curlPos += curlNoise(curlPos * uCurlFreq * 2.0) * 0.5;
+        // curlPos += curlNoise(curlPos * uCurlFreq * 4.0) * 0.25;
+        // curlPos += curlNoise(curlPos * uCurlFreq * 8.0) * 0.125;
+        // curlPos += curlNoise(pos * uCurlFreq * 16.0) * 0.0625;
         gl_FragColor = vec4(mix(pos, curlPos, snoise(pos + t)), 1.0);
       }`,
       uniforms: {
@@ -173,6 +173,9 @@ class ParticleSimMaterial extends THREE.ShaderMaterial {
         uTime: { value: 0 },
         uCurlFreq: { value: 0.25 },
       },
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      transparent: true,
     });
   }
 }

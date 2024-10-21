@@ -41,6 +41,13 @@ const getRandomData = (width: number, height: number) => {
 
 class SimulationMaterial extends THREE.ShaderMaterial {
   constructor(size: number) {
+    const positionTexture = new THREE.DataTexture(
+      getRandomData(size, size),
+      size,
+      size,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+    );
     const positionsSphereTexture = new THREE.DataTexture(
       getSphere(size * size, size / 4),
       size,
@@ -49,6 +56,7 @@ class SimulationMaterial extends THREE.ShaderMaterial {
       THREE.FloatType,
     );
     positionsSphereTexture.needsUpdate = true;
+    positionTexture.needsUpdate = true;
 
     const simulationUniforms = {
       uPositions: { value: positionsSphereTexture },

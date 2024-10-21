@@ -1,22 +1,13 @@
-// varying vec2 vUv;
-varying vec3 vColor;
 varying float vDistance;
-
-// void main() {
-//   float strength = distance(gl_PointCoord, vec2(0.5));
-//   strength = 1.0 - strength;
-//   strength = pow(strength, 10.0);
-
-//   vec3 color = vec3(0.34, 0.53, 0.96);
-
-//   // strength = mix(0.0, color, strength);
-
-//   gl_FragColor = vec4(color, 1.0);
-// }
+varying vec3 vColor;
 
 void main() {
-  vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-  if (dot(cxy, cxy) > 1.0)
-    discard;
-  gl_FragColor = vec4(vec3(1.0), (1.04 - clamp(vDistance * 1.5, 0.0, 1.0)));
+  float strength = distance(gl_PointCoord, vec2(0.5));
+  strength *= 2.0;
+  strength = 1.0 - strength;
+
+    // Final color
+  vec3 color = mix(vec3(0.0), vec3(0.349, 0.4863, 0.5412), strength);
+  gl_FragColor = vec4(color, strength);
+    #include <colorspace_fragment>
 }

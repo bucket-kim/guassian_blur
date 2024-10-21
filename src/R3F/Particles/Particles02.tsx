@@ -1,4 +1,4 @@
-import { Hud, useFBO } from '@react-three/drei';
+import { useFBO } from '@react-three/drei';
 import {
   createPortal,
   extend,
@@ -10,9 +10,9 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import SimulationMaterial from './SimulationMaterial';
 // @ts-ignore
-import vertexShader from './ParticleShader/vertex.glsl';
+import vertexShader from './Particle02Shader/vertex.glsl';
 // @ts-ignore
-import fragmentShader from './ParticleShader/fragment.glsl';
+import fragmentShader from './Particle02Shader/fragment.glsl';
 
 extend({ SimulationMaterial: SimulationMaterial });
 
@@ -35,8 +35,8 @@ const Particles02 = () => {
   const pointsRef = useRef<THREE.Points>(null);
 
   // const size = 2048;
-  const size = 1024;
-  // const size = 512;
+  // const size = 1024;
+  const size = 512;
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
@@ -54,8 +54,10 @@ const Particles02 = () => {
 
   const uvs = new Float32Array([0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0]);
 
-  const insideColor = new THREE.Color('#ff6030');
-  const outsideColor = new THREE.Color('#1b3984');
+  // const color001 = new THREE.Color('#FF4C00');
+  const color002 = new THREE.Color('#BFB9FF');
+  const color001 = new THREE.Color('#FFDBBA');
+  // const color002 = new THREE.Color('#FFEEC8');
 
   const renderTarget = useFBO(size, size, {
     minFilter: THREE.NearestFilter,
@@ -76,10 +78,26 @@ const Particles02 = () => {
     return particles;
   }, [size]);
 
+  const colorArray = useMemo(() => {
+    const length = size * size;
+    const colors = new Float32Array(length * 3); // Store RGB for each particle
+    for (let i = 0; i < length; i++) {
+      const i3 = i * 3;
+      // const randomFactor = Math.random(); // Random factor to determine color interpolation
+      const color = color001.clone();
+      color.lerp(color002, (Math.random() * 5) / 5);
+      colors;
+      colors[i3 + 0] = color.r;
+      colors[i3 + 1] = color.g;
+      colors[i3 + 2] = color.b;
+    }
+    return colors;
+  }, [size]);
+
   const particleControls = useControls({
-    uFocus: { value: 9, min: 0, max: 15, step: 0.01 },
-    uFov: { value: 10, min: 0, max: 200, step: 0.01 },
-    uFrequency: { value: 0.35, min: 0.01, max: 0.75, step: 0.01 },
+    uFocus: { value: 5, min: 0, max: 15, step: 0.01 },
+    uFov: { value: 50, min: 0, max: 200, step: 0.01 },
+    uFrequency: { value: 0.2, min: 0.01, max: 0.75, step: 0.01 },
   });
 
   const uniforms = useMemo(
@@ -111,7 +129,7 @@ const Particles02 = () => {
 
     const pointsMaterial = pointsRef.current.material as THREE.ShaderMaterial;
     pointsMaterial.uniforms.uPositions.value = renderTarget.texture;
-    simulatorMatRef.current.uniforms.uTime.value = elapsedTime * 2;
+    simulatorMatRef.current.uniforms.uTime.value = elapsedTime;
     pointsMaterial.uniforms.uFocus.value = THREE.MathUtils.lerp(
       pointsMaterial.uniforms.uFocus.value,
       particleControls.uFocus,
@@ -131,100 +149,53 @@ const Particles02 = () => {
   });
 
   return (
-    // <group position={[0, 0, 0]} frustumCulled={false} scale={3}>
-    //   {createPortal(
-    //     <mesh>
-    //       <simulationMaterial ref={simulatorMatRef} args={[size]} />
-    //       <bufferGeometry>
-    //         <bufferAttribute
-    //           attach={'attributes-position'}
-    //           count={positions.length / 3}
-    //           array={positions}
-    //           itemSize={3}
-    //         />
-    //         <bufferAttribute
-    //           attach={'attributes-uv'}
-    //           count={uvs.length / 2}
-    //           array={uvs}
-    //           itemSize={2}
-    //         />
-    //       </bufferGeometry>
-    //     </mesh>,
-    //     scene,
-    //   )}
-    //   <points ref={pointsRef}>
-    //     <bufferGeometry>
-    //       <bufferAttribute
-    //         attach={'attributes-position'}
-    //         count={particlesPosition.length / 3}
-    //         array={particlesPosition}
-    //         itemSize={3}
-    //       />
-    //       {/* <bufferAttribute
-    //           attach={'attributes-color'}
-    //           count={particlesPosition.length / 2}
-    //           array={particlesPosition}
-    //           itemSize={2}
-    //         /> */}
-    //     </bufferGeometry>
-    //     <shaderMaterial
-    //       blending={THREE.AdditiveBlending}
-    //       depthWrite={false}
-    //       transparent={true}
-    //       uniforms={uniforms}
-    //       vertexShader={vertexShader}
-    //       fragmentShader={fragmentShader}
-    //     />
-    //   </points>
-    // </group>
-    <Hud renderPriority={2}>
-      <group position={[0, 0, 0]} frustumCulled={false} scale={4}>
-        {createPortal(
-          <mesh>
-            <simulationMaterial ref={simulatorMatRef} args={[size]} />
-            <bufferGeometry>
-              <bufferAttribute
-                attach={'attributes-position'}
-                count={positions.length / 3}
-                array={positions}
-                itemSize={3}
-              />
-              <bufferAttribute
-                attach={'attributes-uv'}
-                count={uvs.length / 2}
-                array={uvs}
-                itemSize={2}
-              />
-            </bufferGeometry>
-          </mesh>,
-          scene,
-        )}
-        <points ref={pointsRef}>
+    <group position={[0, 0, 0]} frustumCulled={false} scale={4}>
+      {createPortal(
+        <mesh>
+          <simulationMaterial ref={simulatorMatRef} args={[size]} />
           <bufferGeometry>
             <bufferAttribute
               attach={'attributes-position'}
-              count={particlesPosition.length / 3}
-              array={particlesPosition}
+              count={positions.length / 3}
+              array={positions}
               itemSize={3}
             />
-            {/* <bufferAttribute
-              attach={'attributes-color'}
-              count={particlesPosition.length / 2}
-              array={particlesPosition}
+            <bufferAttribute
+              attach={'attributes-uv'}
+              count={uvs.length / 2}
+              array={uvs}
               itemSize={2}
-            /> */}
+            />
           </bufferGeometry>
-          <shaderMaterial
-            blending={THREE.AdditiveBlending}
-            depthWrite={false}
-            transparent={true}
-            uniforms={uniforms}
-            vertexShader={vertexShader}
-            fragmentShader={fragmentShader}
+        </mesh>,
+        scene,
+      )}
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach={'attributes-position'}
+            count={particlesPosition.length / 3}
+            array={particlesPosition}
+            itemSize={3}
           />
-        </points>
-      </group>
-    </Hud>
+          <bufferAttribute
+            attach={'attributes-color'}
+            count={colorArray.length / 3}
+            array={colorArray}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <shaderMaterial
+          blending={THREE.NormalBlending}
+          depthWrite={false}
+          transparent={true}
+          uniforms={uniforms}
+          vertexColors={true}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+        />
+      </points>
+    </group>
   );
 };
 

@@ -1,4 +1,3 @@
-import { Hud } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
@@ -36,10 +35,10 @@ const Particles = () => {
 
   const uniforms = useMemo(
     () => ({
-      u_time: {
+      uTime: {
         value: 0,
       },
-      u_radius: {
+      uRadius: {
         value: radius,
       },
     }),
@@ -54,7 +53,7 @@ const Particles = () => {
 
     const material = pointsRef.current.material as THREE.ShaderMaterial;
 
-    material.uniforms.u_time.value = elapsedTime * 0.01;
+    material.uniforms.uTime.value = elapsedTime * 0.001;
 
     // for (let i = 0; i < count; i++) {
     //   const i3 = i * 3;
@@ -67,30 +66,30 @@ const Particles = () => {
     //     Math.sin(elapsedTime + Math.random() * 10) * 0.01;
     // }
 
-    // pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
-    <Hud renderPriority={2}>
-      <points ref={pointsRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={particlePosition.length / 3}
-            array={particlePosition}
-            itemSize={3}
-            normalized={false}
-          />
-        </bufferGeometry>
-        <shaderMaterial
-          transparent
-          depthWrite={false}
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-          uniforms={uniforms}
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={particlePosition.length / 3}
+          array={particlePosition}
+          itemSize={3}
+          normalized={false}
         />
-      </points>
-    </Hud>
+      </bufferGeometry>
+      <shaderMaterial
+        transparent={true}
+        depthWrite={false}
+        vertexColors={true}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        uniforms={uniforms}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
   );
 };
 

@@ -20,7 +20,9 @@ declare global {
       particleSimMaterial: ReactThreeFiber.Object3DNode<
         THREE.ShaderMaterial,
         typeof THREE.ShaderMaterial
-      >;
+      > & {
+        args?: [number];
+      };
       dofPointsMaterial: ReactThreeFiber.Object3DNode<
         THREE.ShaderMaterial,
         typeof THREE.ShaderMaterial
@@ -30,7 +32,7 @@ declare global {
 }
 
 const Particles01 = () => {
-  const size = 512;
+  const size = 128;
 
   const particleSimMatref = useRef<THREE.ShaderMaterial>(null);
   const dofPointMatRef = useRef<THREE.ShaderMaterial>(null);
@@ -52,7 +54,7 @@ const Particles01 = () => {
   const target = useFBO(size, size, {
     minFilter: THREE.NearestFilter,
     magFilter: THREE.NearestFilter,
-    format: THREE.RGBFormat,
+    format: THREE.RGBAFormat,
     stencilBuffer: false,
     type: THREE.FloatType,
   });
@@ -82,20 +84,14 @@ const Particles01 = () => {
     gl.setRenderTarget(null);
 
     dofPointMatRef.current.uniforms.positions.value = target.texture;
-    // dofPointMatRef.current.uniforms.uTime.value = elapsedTime;
     particleSimMatref.current.uniforms.uTime.value = elapsedTime;
-    // particleSimMatref.current.uniforms.uCurlFreq.value = THREE.MathUtils.lerp(
-    //   particleSimMatref.current.uniforms.uCurlFreq.value,
-    //   0.1,
-    //   0.1,
-    // );
   });
 
   return (
-    <group>
+    <group scale={2}>
       {createPortal(
         <mesh>
-          <particleSimMaterial ref={particleSimMatref} />
+          <particleSimMaterial ref={particleSimMatref} args={[size]} />
           <bufferGeometry>
             <bufferAttribute
               attach={'attributes-position'}
