@@ -36,7 +36,7 @@ const Particles02 = () => {
 
   // const size = 2048;
   // const size = 1024;
-  const size = 512;
+  const size = 256;
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(
@@ -97,7 +97,7 @@ const Particles02 = () => {
   const particleControls = useControls({
     uFocus: { value: 5, min: 0, max: 15, step: 0.01 },
     uFov: { value: 50, min: 0, max: 200, step: 0.01 },
-    uFrequency: { value: 0.2, min: 0.01, max: 0.75, step: 0.01 },
+    uFrequency: { value: 0.25, min: 0.01, max: 0.75, step: 0.01 },
   });
 
   const uniforms = useMemo(
@@ -130,16 +130,16 @@ const Particles02 = () => {
     const pointsMaterial = pointsRef.current.material as THREE.ShaderMaterial;
     pointsMaterial.uniforms.uPositions.value = renderTarget.texture;
     simulatorMatRef.current.uniforms.uTime.value = elapsedTime;
-    pointsMaterial.uniforms.uFocus.value = THREE.MathUtils.lerp(
-      pointsMaterial.uniforms.uFocus.value,
-      particleControls.uFocus,
-      0.1,
-    );
-    pointsMaterial.uniforms.uFov.value = THREE.MathUtils.lerp(
-      pointsMaterial.uniforms.uFov.value,
-      particleControls.uFov,
-      0.1,
-    );
+    // pointsMaterial.uniforms.uFocus.value = THREE.MathUtils.lerp(
+    //   pointsMaterial.uniforms.uFocus.value,
+    //   particleControls.uFocus,
+    //   0.1,
+    // );
+    // pointsMaterial.uniforms.uFov.value = THREE.MathUtils.lerp(
+    //   pointsMaterial.uniforms.uFov.value,
+    //   particleControls.uFov,
+    //   0.1,
+    // );
 
     simulatorMatRef.current.uniforms.uFrequency.value = THREE.MathUtils.lerp(
       simulatorMatRef.current.uniforms.uFrequency.value,

@@ -139,7 +139,7 @@ vec3 curlNoise(vec3 p) {
 
 void main() {
 
-  float t = uTime * 0.015;
+  float t = uTime * 0.1;
 
   vec3 pos = texture2D(uPositions, vUv).rgb;
   vec3 curlPos = texture2D(uPositions, vUv).rgb;
@@ -147,10 +147,10 @@ void main() {
   pos = curlNoise(pos * uFrequency + t);
   curlPos = curlNoise(curlPos * uFrequency + t);
   curlPos += curlNoise(curlPos * uFrequency * 2.0) * .5;
-  // curlPos += curlNoise(curlPos * uFrequency * 4.0) * 0.25;
-  curlPos += curlNoise(curlPos * uFrequency * 8.0) * 0.125;
-  curlPos += curlNoise(pos * uFrequency * 16.0) * 0.0625;
-  curlPos += curlNoise(pos * uFrequency * 32.0) * 0.0625 * 0.5;
+  curlPos += curlNoise(curlPos * uFrequency * 4.0) * 0.25;
+  // curlPos += curlNoise(curlPos * uFrequency * 8.0) * 0.125;
+  // curlPos += curlNoise(pos * uFrequency * 16.0) * 0.0625;
+  // curlPos += curlNoise(pos * uFrequency * 32.0) * 0.0625 * 0.5;
 
   gl_FragColor = vec4(mix(pos, curlPos, snoise(pos + t)), 1.0);
 }

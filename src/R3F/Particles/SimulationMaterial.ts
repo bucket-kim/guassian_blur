@@ -59,7 +59,7 @@ class SimulationMaterial extends THREE.ShaderMaterial {
     positionTexture.needsUpdate = true;
 
     const simulationUniforms = {
-      uPositions: { value: positionsSphereTexture },
+      uPositions: { value: positionTexture },
       uFrequency: { value: 0.75 },
       uTime: { value: 0 },
     };

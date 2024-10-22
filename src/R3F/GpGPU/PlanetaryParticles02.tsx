@@ -67,14 +67,20 @@ const PlanetaryParticles02 = () => {
       positions[i3 + 1] = sphereRadius * Math.cos(phi);
       positions[i3 + 2] = sphereRadius * Math.sin(phi) * Math.sin(theta);
 
-      const hue = Math.random() * 60 + 180; // Blue to cyan range
-      const lightness = 60 + Math.random() * 30;
-      const color = new THREE.Color().setHSL(hue / 360, 1, lightness / 100);
+      // const hue = Math.random() * 60 + 180; // Blue to cyan range
+      const hue = Math.random() * 60 + 180;
+      const saturation = 0.5; // 50% saturation
+      const lightness = 90 + Math.random() * 10;
+      const color = new THREE.Color().setHSL(
+        hue / 360,
+        saturation,
+        lightness / 100,
+      );
       colors[i3] = color.r;
       colors[i3 + 1] = color.g;
       colors[i3 + 2] = color.b;
 
-      sizes[i] = 0.05 + Math.random() * 0.3; // Larger particle sizes
+      sizes[i] = 0.02 + Math.random() * 0.3; // Larger particle sizes
     }
 
     return [positions, colors, sizes];
@@ -130,7 +136,7 @@ const PlanetaryParticles02 = () => {
       windSpeed += latitudeSin * Math.sin(theta + time) * 0.001;
 
       // Rotate around y-axis for east-west movement
-      theta += windSpeed * 0.5;
+      theta += windSpeed * 0.15;
 
       // Influence from vortices (high/low pressure systems)
       for (const vortex of vortices) {
